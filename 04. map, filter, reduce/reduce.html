@@ -1,0 +1,51 @@
+<script>const log = console.log;</script>
+
+# reduce
+
+<script>
+
+  const nums = [1, 2, 3, 4, 5];
+  
+  let total = 0;
+  for (const n of nums) {
+    total = total + n;
+  }
+  log(total);
+
+  const reduce = (f, acc, iter) => {
+    // 초기값을 optional하게 받기 위한 처리
+    if (!iter) {
+      iter = acc[Symbol.iterator]();
+      acc = iter.next().value;
+    }
+
+    for (const a of iter) {
+      acc = f(acc, a);
+    }
+    return acc;
+  };
+
+  const add = (a, b) => a + b;
+
+  log(reduce(add, 0, [1, 2, 3, 4, 5]));
+  // 15
+
+  log(reduce(add, [1, 2, 3, 4, 5]));
+  // 15
+  // 초기값을 설정하지 않아도 동일한 결과가 나온다.
+
+</script>
+
+<script>
+  const products = [
+    { name: '반팔티', price: 15000 },
+    { name: '긴팔티', price: 20000 },
+    { name: '핸드폰케이스', price: 15000 },
+    { name: '후드티', price: 30000 },
+    { name: '바지', price: 25000 },
+  ];
+
+  log(reduce(
+    (total_price, products) => total_price + products.price, 0, products
+    ));
+</script>
