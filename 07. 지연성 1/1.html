@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  
+<script src="../lib/fx.js"></script>
+
+## range
+
+<script>
+  const add = (a, b) => a + b;
+
+  const range = l => {
+    let i = -1;
+    let res = [];
+    while (++i < l) {
+      res.push(i);
+    }
+    return res;
+  };
+
+  // var list = range(4);
+  // log(list);
+  // log(reduce(add, list));
+</script>
+
+## 느긋한 L.range
+  - L.range는 배열을 바로 만들지 않고 값이 필요할 때 하나씩 꺼내기만 함.
+
+<script>
+  const L = {};
+  L.range = function *(l) {
+    let i = -1;
+    while (++i < l) {
+      yield i;
+    }
+  };
+
+  // var list = L.range(4);
+  // log(list);
+  // log(reduce(add, list));
+
+  /*******
+  reduce 안에서 두 함수의 차이점.
+   - range는 array를 만들고 array를 다시 interator를 만들어서 next를 호출하며 값을 반환.
+   - L.range는 interator를 만들고 그것의 iterable은 자기자신을 반환하기 때문에 그냥 값을 하나씩 꺼내면 된다.
+   - 따라서 L.range가 좀 더 효율적이라고 볼 수 있다.
+  *******/
+</script>
+
+<script>
+  function test(name, time, f) {
+    console.time(name);
+    while (time--) f();
+    console.timeEnd(name);
+  }
+
+  test('L.range', 10, () => reduce(add, L.range(1000000)));
+  test('range', 10, () => reduce(add, range(1000000)));
+</script>
+</body>
+</html>
