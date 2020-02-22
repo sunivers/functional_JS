@@ -24,9 +24,9 @@
     return res;
   };
 
-  // var list = range(4);
-  // log(list);
-  // log(reduce(add, list));
+  var list = range(4);
+  log(list);
+  log(reduce(add, list));
 </script>
 
 ## 느긋한 L.range
@@ -41,9 +41,9 @@
     }
   };
 
-  // var list = L.range(4);
-  // log(list);
-  // log(reduce(add, list));
+  var list = L.range(4);
+  log(list);
+  log(reduce(add, list));
 
   /*******
   reduce 안에서 두 함수의 차이점.
@@ -60,8 +60,72 @@
     console.timeEnd(name);
   }
 
-  test('L.range', 10, () => reduce(add, L.range(1000000)));
   test('range', 10, () => reduce(add, range(1000000)));
+  test('L.range', 10, () => reduce(add, L.range(1000000)));
 </script>
+
+## take
+
+<script>
+  const take = curry((l, iter) => {
+    let res = [];
+    for (const a of iter) {
+      res.push(a);
+      if (res.length === l) return res;
+    }
+    return res;
+  });
+  console.time('');
+  // log(take(5, range(1000000))); // Infinity 넣으면 브라우저 뻗음
+  go(
+    range(100000),
+    take(5),
+    reduce(add),
+    log
+  );
+  console.timeEnd('');
+
+  console.time('');
+  // // log(take(5, L.range(Infinity))); // 어떤값이든 5개만 평가함.
+  go(
+    L.range(100000),
+    take(5),
+    reduce(add),
+    log
+  );
+  console.timeEnd('');
+
+  // 이터러블 프로토콜을 따르는 함수라면 range, L.range 상관없이 모두 소통 가능함.
+  console.clear();
+</script>
+
+# 이터러블 중심 프로그래밍에서의 지연 평가 (Lazy Evaluation)
+  - 제때 계산법
+  - 느긋한 계산법
+  - 제너레이터/이터레이터 프로토콜을 기반으로 구현
+
+### L.map
+<script>
+  L.map = function *(f, iter) {
+    for (const a of iter) yield f(a);
+  };
+  var it = L.map(a => a + 10, [1, 2, 3]);
+  // log(it.next());
+  // log(it.next());
+  // log(it.next());
+  log([...it]);
+</script>
+
+### L.filter
+<script>
+  L.filter = function *(f, iter) {
+    for (const a of iter) if (f(a)) yield a;
+  };
+  var it = L.filter(a => a % 2, [1, 2, 3, 4]);
+  log(it.next());
+  log(it.next());
+  log(it.next());
+</script>
+
 </body>
 </html>
