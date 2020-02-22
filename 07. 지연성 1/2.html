@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script src="../lib/fx.js"></script>
+
+  ### range, map, filter, take, reduce 중첩 사용
+
+  <script>
+    // 실행되는 순서
+    // range 실행 ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    // map 실행 ([10, 11, 12, ...])
+    // filter 실행 ([11, 13, 15, ...])
+    // take 실행 ([11, 13])
+    go(range(10),
+    map(n => n + 10),
+    filter(n => n % 2),
+    take(2),
+    log);
+  </script>
+
+  ### L.range, L.map, L.filter, take, reduce 중첩 사용
+
+  <script>
+    // 브레이크포인트를 걸면 take 함수 안쪽부터 잡힌다.
+    // take 함수 내에서 iter.next()를 하면 L.filter로 넘어간다.
+    // L.filter에서 iter.next()를 하면 L.map으로 넘어간다.
+    // L.map에서 iter.next()를 하면 L.range로 넘어간다.
+    // 평가를 미루는 제너레이터 함수는 평가가 필요할 때까지 실행을 건너뛴다.
+    // 가로 실행이 아니라 세로 실행
+    // 0 10 false / 1 11 true / 2 12 false / ...
+    go(L.range(10),
+      L.map(n => n + 10),
+      L.filter(n => n % 2),
+      take(2),
+      log);
+  </script>
+</body>
+</html>
