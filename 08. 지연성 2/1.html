@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script src="../lib/fx.js"></script>
+  
+  ## 결과를 만드는 함수 reduce, take 
+  (이터레이터 형태를 유지하는 것이 아닌 깨트려서 새로운 값을 만들어내는, 즉 연산을 시작하는 함수)
+
+  ### reduce
+  <script>
+    // 지연 평가를 위한 entries 함수
+    L.entries = function *(obj) {
+      for (const k in obj) yield [k, obj[k]];
+    };
+
+    // Array.prototype.join 보다 다형성이 높은 join 함수
+    const join = curry((sep = ',', iter) =>
+      reduce((a, b) => `${a}${sep}${b}`, iter));
+
+    const queryStr = pipe(
+      // obj => go(obj) 부분을 pipe() 로 변경
+      // Object.entries,
+      // 지연 평가 가능
+      L.entries,
+      a => (console.log(a), a),
+      L.map(([k, v]) => `${k}=${v}`),
+      a => (console.log(a), a),
+      // reduce((a, b) => `${a}&${b}`)
+      join('&')
+    );
+
+    log(queryStr({ limit: 10, offset: 10, type: 'notice' }));
+
+    function *a() {
+      yield 10;
+      yield 11;
+      yield 12;
+      yield 13;
+      yield 14;
+    }
+
+    // log(a().join()) // Array.prototype.join 불가능
+    log(join(' - ', a())); // 배열이든 이터레이터든 모두 가능
+  </script>
+
+  ### take, find
+  <script>
+    const users = [
+      { age: 32 },
+      { age: 31 },
+      { age: 37 },
+      { age: 28 },
+      { age: 25 },
+      { age: 32 },
+      { age: 31 },
+      { age: 37 },
+    ];
+
+    const find = curry((f, iter) => go(
+      iter,
+      L.filter(f),
+      take(1),
+      ([a]) => a
+    ));
+    log(find(u => u.age < 30)(users));
+
+    go(users,
+      L.map(u => u.age),
+      find(n => n < 30),
+      log);
+  </script>
+</body>
+</html>
